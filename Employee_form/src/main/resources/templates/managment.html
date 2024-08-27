@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Page</title>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+        }
+        .form-container {
+            margin-bottom: 30px;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -10px;
+        }
+        .form-group {
+            padding: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .btn-primary,
+        .btn-secondary {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .form-group .error-message {
+            color: red;
+            font-size: 14px;
+        }
+        /* Styling for the file upload form */
+        .file-upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .file-upload-form input[type="file"] {
+            margin-bottom: 10px;
+        }
+        .file-upload-form button {
+            background-color: #28a745; /* Green color for upload button */
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+        }
+        .file-upload-form button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function getSubcategories() {
+            var category = document.getElementById("category").value;
+            var subcategorySelect = document.getElementById("subcategory");
+            var companySelect = document.getElementById("companyname");
+            var serialSelect = document.getElementById("slNo");
+
+            // Reset subcategory options
+            subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+            companySelect.innerHTML = '<option value="">Select Company Name</option>';
+            serialSelect.innerHTML = '<option value="">Select Serial Number</option>';
+
+            if (category) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/fetchSubcategories?categoryId=" + encodeURIComponent(category), true);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            var subcategories = JSON.parse(xhr.responseText);
+
+                            // Populating  subcategory options
+                            subcategories.forEach(function(subcategory) {
+                                var option = document.createElement("option");
+                                option.textContent = subcategory.sub_name;
+                                option.value = subcategory.id;
+                                subcategorySelect.appendChild(option);
+                            });
+
+                            subcategorySelect.disabled = false;
+                        } catch (e) {
+                            console.error("Error parsing JSON response:", e);
+                        }
+                    } else {
+                        console.error("Failed to fetch subcategories. Status:", xhr.status);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.error("Network error occurred while trying to fetch subcategories.");
+                };
+
+                xhr.send();
+            } else {
+                subcategorySelect.disabled = true;
+            }
+        }
+//fetching the company name
+        function fetchCompanies(subcategoryId) {
+            var companySelect = document.getElementById("companyname");
+            companySelect.innerHTML = '<option value="">Loading...</option>';
+
+            fetch('/fetchCompanies?subcategoryId=' + encodeURIComponent(subcategoryId))
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    companySelect.innerHTML = '<option value="">Select Company Name</option>';
+                    data.forEach(company => {
+                        var option = document.createElement("option");
+                        option.textContent = company;
+                        option.value = company;
+                        companySelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching company names:', error);
+                    companySelect.innerHTML = '<option value="">Error loading company names</option>';
+                });
+        }
+        
+
+        function fetchSerialNumbers(subcategoryId) {
+            var serialSelect = document.getElementById("slNo");
+            serialSelect.innerHTML = '<option value="">Loading...</option>';
+
+            fetch('/fetchSerialNumbers?subcategoryId=' + encodeURIComponent(subcategoryId))
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    serialSelect.innerHTML = '<option value="">Select Serial Number</option>';
+                    data.forEach(serialNumber => {
+                        var option = document.createElement("option");
+                        option.textContent = serialNumber;
+                        option.value = serialNumber;
+                        serialSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching serial numbers:', error);
+                    serialSelect.innerHTML = '<option value="">Error loading serial numbers</option>';
+                });
+        }
+
+        function onSubcategoryChange() {
+            var subcategoryId = document.getElementById("subcategory").value;
+            fetchCompanies(subcategoryId);
+            fetchSerialNumbers(subcategoryId);
+        }
+
+        function fetchEmployees() {
+            var employeeSelect = document.getElementById("employeename");
+            employeeSelect.innerHTML = '<option value="">Loading...</option>';
+
+            fetch('/fetchEmployees')
+                .then(response => response.json())
+                .then(data => {
+                    employeeSelect.innerHTML = '<option value="">Select Employee Name</option>';
+                    data.forEach(employee => {
+                        var option = document.createElement("option");
+                        option.textContent = employee; // Should be a string
+                        option.value = employee; // Should be a string
+                        employeeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching employee names:', error);
+                    employeeSelect.innerHTML = '<option value="">Error loading employee names</option>';
+                });
+        }
+
+        window.onload = function() {
+            fetchEmployees(); // Fetch employee names when the page loads
+            document.getElementById("subcategory").addEventListener("change", onSubcategoryChange);
+        };
+    </script>
+</head>
+<body>
+
+<main>
+<div th:replace="fragments/header :: header"></div>
+    <div class="container">
+        <div class="form-container">
+            <h2>Management Items</h2>
+            <form id="addItemForm" th:action="@{/manageAssets}" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="category" name="category" onchange="getSubcategories()">
+                            <option value="">Select Category</option>
+                            <!-- Categories should be populated server-side -->
+                            <th:block th:each="category : ${categories}">
+                                <option th:value="${category.id}" th:text="${category.name}" th:selected="${category.id == selectedCategoryId}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subcategory">Subcategory:</label>
+                        <select id="subcategory" name="subcategory" disabled>
+                            <option value="">Select Subcategory</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyname">Company Name:</label>
+                        <select id="companyname" name="companyName">
+                            <option value="">Select Company Name</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="slNo">Serial Number:</label>
+                        <select id="slNo" name="serialNumber" required>
+                            <option value="">Select Serial Number</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="employeename">Employee Name:</label>
+                        <select id="employeename" name="employeeName" required>
+                            <option value="">Select Employee Name</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- New CSV Upload Form -->
+        <div class="form-container">
+            <h2>Upload CSV File</h2>
+            <form class="file-upload-form" action="#" th:action="@{/uploadCsv}" th:object="${fileUploadForm}" method="post" enctype="multipart/form-data">
+                <input type="file" name="fileUpload" accept=".csv" />
+                <button type="submit">Upload</button>
+            </form>
+            <div class="message" th:if="${message}" th:text="${message}"></div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

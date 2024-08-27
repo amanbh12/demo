@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Form</title>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Form styles */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Radio buttons */
+        .form-check {
+            margin-bottom: 10px;
+        }
+
+        .form-check-inline {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .form-check-input {
+            margin-right: 5px;
+            accent-color: #007bff; /* Custom color for the radio button */
+        }
+
+        .form-check-label {
+            margin-right: 10px;
+            font-size: 1em;
+        }
+
+        /* Submit button */
+        .btn {
+            background-color: #28a745; /* Green color */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        .btn:focus {
+            outline: none;
+        }
+    </style>
+    <script>
+    function validate() {
+    const contact = document.myform.contact.value;
+    const contactPattern = /^[6-9]\d{9}$/;
+    
+
+    if (!contactPattern.test(contact)) {
+        alert("Contact Number must contain only 10 digits should be starting off with 6, 7, 8 or 9.");
+        return false; 
+    }
+
+    const firstName = document.myform.firstname.value;
+    const lastName = document.myform.lastname.value;
+    const fathersName = document.myform.fathersname.value;
+    const namePattern = /^[A-Za-z\s]+$/; 
+
+    if (!namePattern.test(firstName)) {
+        alert("First Name must contain only letters and spaces.");
+        return false; 
+    }
+
+    if (!namePattern.test(lastName)) {
+        alert("Last Name must contain only letters and spaces.");
+        return false; 
+    }
+
+    if (!namePattern.test(fathersName)) {
+        alert("Father's Name must contain only letters and spaces.");
+        return false; 
+    }
+
+    return true; 
+}
+
+</script>
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    <main>
+        <div class="container mt-5">
+            <form name="myform" th:action="@{/users}" method="post" enctype="multipart/form-data" onsubmit="return validate();">
+                <div class="form-group">
+                    <label for="firstname">First Name:</label>
+                    <input type="text" id="firstname" class="form-control" name="firstname" />
+                </div>
+                <div class="form-group">
+                    <label for="lastname">Last Name:</label>
+                    <input type="text" id="lastname" class="form-control" name="lastname" />
+                </div>
+                <div class="form-group">
+                    <label for="fathersname">Father's Name:</label>
+                    <input type="text" id="fathersname" class="form-control" name="fathersname" />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" class="form-control" name="email" />
+                </div>
+                <div class="form-group">
+                    <label for="contact">Contact Number:</label>
+                    <input type="text" id="contact" class="form-control" name="contact" />
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" class="form-control" name="address" />
+                </div>
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" id="genderMale" value="male" class="form-check-input" name="gender" />
+                        <label class="form-check-label" for="genderMale">Male</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" id="genderFemale" value="female" class="form-check-input" name="gender" />
+                        <label class="form-check-label" for="genderFemale">Female</label>
+                    </div>
+                </div>
+                 
+                <div class="form-group">
+                    <label for="image">Profile Image:</label>
+                    <input type="file" id="image" class="form-control-file" name="image" />
+                    <img id="imagePreview" src="" alt="Image Preview" style="display: none; margin-top: 10px; max-width: 100%;"/>
+                </div>
+                <button type="submit" class="btn">Submit</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

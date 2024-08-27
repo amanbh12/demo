@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Light gray background */
+        }
+
+        /* Header styles */
+        header {
+            background-color:  #4CAF50; /* Bootstrap blue */
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em; /* Larger font size for the title */
+        }
+
+        /* Navigation styles */
+        nav {
+            margin: 20px 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center; /* Center align the navigation items */
+            gap: 20px; /* Space between navigation items */
+        }
+
+        nav ul li {
+            margin: 0;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em; /* Slightly larger font size */
+            padding: 10px 15px;
+            border-radius: 5px; /* Rounded corners for links */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+        }
+
+        nav ul li a:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            color: #e0e0e0; /* Light gray text color on hover */
+        }
+
+        /* Main content styles */
+        main {
+            padding: 20px;
+            max-width: 1200px; /* Max width for larger screens */
+            margin: 0 auto; /* Center align main content */
+            background-color: #fff; /* White background for content */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border-radius: 8px; /* Rounded corners */
+        }
+
+        /* Footer styles */
+       
+    </style>
+</head>
+<body>
+    <header>
+        
+        <nav>
+            <ul>
+            	<li><a href="/dashboard">Home</a></li>
+                <li><a href="/index">Add Employee</a></li>
+                <li><a href="/view">View Employee</a></li>
+                <li><a href="/category">Categories</a></li>
+                <li><a href="/subcategorie">SubCategories</a></li>
+                <li><a href="/assets">Assets</a></li>
+                <li><a href="/management">Management</a></li>
+                <li><a href="/viewmanagment">View Management</a></li>
+                <li><a href="/hrmodule/hrms">HR Portal</a></li>
+                <li><a href="/hrmodule/hrmsview">HR view</a></li>
+                
+            </ul>
+        </nav>
+    </header>
+   
+    
+</body>
+</html>

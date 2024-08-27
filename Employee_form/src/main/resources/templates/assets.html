@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="dashboard">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Item</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            margin-top: 50px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .center-button {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <script>
+        function getSubcategories() {
+            var categoryId = document.getElementById("category").value;
+            var subcategorySelect = document.getElementById("subcategory");
+
+            // Reset subcategory options
+            subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+
+            if (categoryId) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/fetchSubcategories?categoryId=" + encodeURIComponent(categoryId), true);
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            var subcategories = JSON.parse(xhr.responseText);
+                            console.log(subcategories)
+                            // Debugging: Print fetched subcategories
+                            console.log("Subcategories fetched:", subcategories);
+
+                            // Populate subcategory options
+                            subcategories.forEach(function(subcategory) {
+                                var option = document.createElement("option");
+                                option.textContent = subcategory.sub_name; // Ensure this matches your JSON data structure
+                                option.value = subcategory.id; // Ensure this matches your JSON data structure
+                                subcategorySelect.appendChild(option);
+                            });
+
+                            subcategorySelect.disabled = false;
+                        } catch (e) {
+                            console.error("Error parsing JSON response:", e);
+                        }
+                    } else {
+                        console.error("Failed to fetch subcategories. Status:", xhr.status);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.error("Network error occurred while trying to fetch subcategories.");
+                };
+
+                xhr.send();
+            } else {
+                subcategorySelect.disabled = true;
+            }
+        }
+    </script>
+</head>
+<body>
+   <div th:replace="fragments/header :: header"></div>
+    <main>
+        <div class="container">
+            <div class="form-container">
+                <h2 class="text-center mb-4">Add Item</h2>
+                <form th:action="@{/assets}" method="post">
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select class="form-control" id="category" name="category.id" onchange="getSubcategories()">
+                            <option value="">Select Category</option>
+                            <th:block th:each="category : ${categories}">
+                                <option th:value="${category.id}" th:text="${category.name}" th:selected="${category.id == selectedCategoryId}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subcategory">Subcategory:</label>
+                        <select class="form-control" id="subcategory" name="subcategory.id" disabled>
+                            <option value="">Select Subcategory</option>
+                           <th:block th:each="subcategory : ${subcategories}">
+                            <option th:value="${subcategory.id}"
+                                    th:text="${subcategory.name}"></option>
+                        </th:block>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="companyname">Company Name:</label>
+                        <input type="text" class="form-control" id="companyname" name="companyname" placeholder="Enter company name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="slNo">Serial Number:</label>
+                        <input type="text" class="form-control" id="slNo" name="slNo" placeholder="Enter serial number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter quantity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="form-group center-button">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div></main>
+        
+    
+</body>
+</html>

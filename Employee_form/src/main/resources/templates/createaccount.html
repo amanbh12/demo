@@ -1,0 +1,200 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e9ecef; /* Light gray background */
+    }
+
+    .container {
+        width: 100%;
+        max-width: 480px; /* Wider container for better alignment */
+        padding: 30px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
+        border-radius: 12px; /* More rounded corners */
+    }
+
+    .account-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .account-form h2 {
+        text-align: center;
+        margin-bottom: 24px; /* Increased space for better readability */
+        color: #333333;
+        font-size: 24px; /* Larger font size for emphasis */
+    }
+
+    .form-group {
+        margin-bottom: 24px; /* Increased spacing between form elements */
+        display: flex; /* Use flexbox for better alignment */
+        flex-direction: column;
+    }
+
+    .form-group.row {
+        flex-direction: row; /* Align children in a row */
+        gap: 16px; /* Space between columns */
+    }
+
+    .form-group.row .form-field {
+        flex: 1; /* Ensure fields take up equal space */
+    }
+
+    .form-group label {
+        font-weight: 500; /* Slightly lighter weight for a modern look */
+        display: block;
+        margin-bottom: 8px; /* Increased space between label and input */
+        color: #666666; /* Lighter gray color for labels */
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px; /* More padding for a comfortable input field */
+        font-size: 16px;
+        border: 1px solid #ced4da; /* Lighter border color */
+        border-radius: 8px; /* More rounded input fields */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #007bff; /* Blue border on focus */
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* Blue shadow on focus */
+    }
+
+    .form-group button {
+        background-color: #007bff; /* Blue background */
+        color: #ffffff;
+        border: none;
+        padding: 14px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 8px; /* Rounded button */
+        width: 100%;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .form-group button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        transform: translateY(-2px); /* Slight lift effect on hover */
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 20px; /* Adjust spacing from form elements */
+        font-size: 14px; /* Smaller font size for the link */
+    }
+
+    .login-link a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500; /* Slightly bolder link */
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        color: #dc3545; /* Red color for errors */
+        margin-bottom: 20px;
+        text-align: center; /* Center align error messages */
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <form th:action="@{/create}" method="post" class="account-form" onsubmit="return validate();">
+        <h2>Account Form</h2>
+
+        <div class="form-group row">
+            <div class="form-field">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" name="name">
+            </div>
+            <div class="form-field">
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" name="lastname">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-field">
+                <label for="mobile">Mobile</label>
+                <input type="tel" id="mobile" name="mobile">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="form-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div class="form-field">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirmpassword">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit">Create account</button>
+        </div>
+    </form>
+
+    <div class="login-link">
+        <p>Already registered? <a href="/login">Login here</a></p>
+    </div>
+</div>
+<script>
+    function validate() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirm-password").value;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return false;
+        }
+
+        var mobile = document.getElementById("mobile").value;
+        var contactPattern = /^[6-9]\d{9}$/;
+
+        if (!contactPattern.test(mobile)) {
+            alert("Mobile number must contain exactly 10 digits.");
+            return false;
+        }
+
+        var firstName = document.getElementById("first-name").value;
+        var lastName = document.getElementById("last-name").value;
+        var namePattern = /^[A-Za-z\s]+$/;
+
+        if (!namePattern.test(firstName)) {
+            alert("First Name must contain only letters and spaces.");
+            return false;
+        }
+
+        if (!namePattern.test(lastName)) {
+            alert("Last Name must contain only letters and spaces.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+</body>
+</html>
